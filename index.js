@@ -30,11 +30,28 @@ const shortHash = require('short-hash');
 
 app.use(express.json())
 
-app.get('/:outUrl', (req, res) => {
-    res.send(shortHash(req.params["outUrl"]));
-});
 app.get('/', (req, res) => {
     res.send('Nothing to see here   :D');
+});
+
+app.get('/:hash', (req, res) => {
+    let inputHash = req.params["hash"];
+    try {
+        const client = await pool.connect()
+        const result = await client.query('SELECT * FROM url_table');
+        if(result){
+            for(let item in result.rows){
+                if(shortHash(item["url"]) == inputHash){
+                    res.redirect(item["url"]);
+                    return;
+                }
+            }
+        }
+        client.release();
+        res.send("Link not found! :(");
+    } catch (err) {
+        res.send("Database error! :(");
+    }
 });
 
 function validURL(str) {
@@ -45,26 +62,36 @@ function validURL(str) {
       '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
       '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
     return !!pattern.test(str);
-  }
+}
 
 app.post('/', (req, res) => {
-    inputUrl = req.body["inputUrl"];
-    /*
+    let inputUrl = req.body["inputUrl"];
+    let inputHash = shortHash(inputUrl);
+    let isInTable = false;
     try {
         const client = await pool.connect()
-        const result = await client.query('SELECT * FROM test_table');
-        const results = { 'results': (result) ? result.rows : null};
-        res.render('pages/db', results );
+        const result = await client.query('SELECT * FROM url_table');
+        if(result){
+            for(let item in result.rows){
+                if(shortHash(item["url"]) == inputHash){
+                    isInTable = true;
+                    break;
+                }
+            }
+        }
+        if(!isInTable){
+            await client.query(`INSERT INTO url_table (url) VALUES ('${inputUrl}');`);
+        }
         client.release();
     } catch (err) {
-        console.error(err);
-        res.send("Error " + err);
+        res.json({
+            validUrl: false,
+            outputUrl:"Database error! :("
+         });
     }
-    */
-   let responseJson = inputUrl;
-   res.json({
-       validUrl: validURL(inputUrl),
-       outputUrl:responseJson
+    res.json({
+        validUrl:validURL(inputUrl),
+        outputUrl:req.protocol + '://' + req.get('host') + "/" + inputHash
     });
 });
 
