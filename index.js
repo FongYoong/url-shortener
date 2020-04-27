@@ -53,7 +53,7 @@ app.post('/', async (req, res) => {
             const client = await pool.connect()
             const result = await client.query('SELECT * FROM url_table');
             if(result){
-                for(let item in result.rows){
+                for(let item of result.rows){
                     if(shortHash(item["url"]) == inputHash){
                         isInTable = true;
                         break;
