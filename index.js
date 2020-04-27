@@ -33,7 +33,7 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send('Nothing to see here   :D');
 });
-
+/*
 app.get('/:hash', (req, res) => {
     let inputHash = req.params["hash"];
     try {
@@ -53,6 +53,7 @@ app.get('/:hash', (req, res) => {
         res.send("Database error! :(");
     }
 });
+*/
 
 function validURL(str) {
     var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
