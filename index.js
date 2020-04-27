@@ -29,8 +29,8 @@ const pool = new Pool({
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.send('Nothing to see here   :D');
+app.get('/:outUrl', (req, res) => {
+    res.send(req.params["outUrl"]+'Nothing to see here   :D');
 });
 
 function validURL(str) {
