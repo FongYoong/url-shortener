@@ -38,7 +38,7 @@ app.get('/:hash', async (req, res) => {
         res.send("Database error! :(");
     }
 });
-
+/*
 function validURL(str) {
     var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -47,7 +47,18 @@ function validURL(str) {
       '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
       '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
     return !!pattern.test(str);
-}
+}*/
+function validURL(string) {
+    let url;
+  
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
 
 app.post('/', async (req, res) => {
     let inputUrl = req.body["inputUrl"];
