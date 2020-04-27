@@ -22,7 +22,7 @@ app.get('/:hash', async (req, res) => {
         if(result){
             for(let item of result.rows){
                 if(shortHash(item["url"]) == inputHash){
-                    let redirectUrl = JSON.stringify(item["url"]).toLowerCase();
+                    let redirectUrl = item["url"].toLowerCase();
                     if (!redirectUrl.match(/^[a-zA-Z]+:\/\//))
                     {
                         redirectUrl = 'http://' + redirectUrl;
