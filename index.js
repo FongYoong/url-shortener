@@ -68,6 +68,7 @@ app.post('/', async (req, res) => {
             validUrl: false,
             outputUrl:"Database error! :("
          });
+         console.log(err);
     }
     res.json({
         validUrl:validURL(inputUrl),
