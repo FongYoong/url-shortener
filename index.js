@@ -48,32 +48,41 @@ app.post('/', async (req, res) => {
     let inputUrl = req.body["inputUrl"];
     let inputHash = shortHash(inputUrl);
     let isInTable = false;
-    try {
-        const client = await pool.connect()
-        const result = await client.query('SELECT * FROM url_table');
-        if(result){
-            for(let item in result.rows){
-                if(shortHash(item["url"]) == inputHash){
-                    isInTable = true;
-                    break;
+    if(validURL(inputUrl)){
+        try {
+            const client = await pool.connect()
+            const result = await client.query('SELECT * FROM url_table');
+            if(result){
+                for(let item in result.rows){
+                    if(shortHash(item["url"]) == inputHash){
+                        isInTable = true;
+                        break;
+                    }
                 }
             }
+            if(!isInTable){
+                await client.query(`INSERT INTO url_table (url) VALUES ('${inputUrl}');`);
+            }
+            client.release();
+        } catch (err) {
+            res.json({
+                validUrl: false,
+                outputUrl:"Database error! :("
+             });
+             console.log("HOHO: "+ err);
         }
-        if(!isInTable){
-            await client.query(`INSERT INTO url_table (url) VALUES ('${inputUrl}');`);
-        }
-        client.release();
-    } catch (err) {
         res.json({
-            validUrl: false,
-            outputUrl:"Database error! :("
-         });
-         console.log(err);
+            validUrl:true,
+            outputUrl:req.protocol + '://' + req.get('host') + "/" + inputHash
+        });
     }
-    res.json({
-        validUrl:validURL(inputUrl),
-        outputUrl:req.protocol + '://' + req.get('host') + "/" + inputHash
-    });
+    else{
+        res.json({
+            validUrl:false,
+            outputUrl:"Invalid URL! :("
+        });
+    }
+    
 });
 
 app.listen(PORT, () => {
