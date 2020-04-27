@@ -20,7 +20,7 @@ function fixUrl(url){
     {
         return 'http://' + url;
     }
-    return 
+    return url;
 }
 
 app.get('/:hash', async (req, res) => {
