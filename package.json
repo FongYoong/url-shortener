@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/FongYoong/url-shortener/issues"
   },
-  "homepage": "https://github.com/FongYoong/url-shortener#readme"
+  "homepage": "https://github.com/FongYoong/url-shortener#readme",
+  "engines": {
+    "node": "12.x"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^7.18.2"
+  }
 }
