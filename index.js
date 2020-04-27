@@ -14,6 +14,15 @@ app.get('/', (req, res) => {
     res.send('Nothing to see here :D');
 });
 
+function fixUrl(url){
+    //Adds http:/ if it's absent
+    if (!url.match(/^[a-zA-Z]+:\/\//))
+    {
+        return 'http://' + url;
+    }
+    return 
+}
+
 app.get('/:hash', async (req, res) => {
     let inputHash = req.params["hash"];
     try {
@@ -22,11 +31,7 @@ app.get('/:hash', async (req, res) => {
         if(result){
             for(let item of result.rows){
                 if(shortHash(item["url"]) == inputHash){
-                    let redirectUrl = item["url"].toLowerCase();
-                    if (!redirectUrl.match(/^[a-zA-Z]+:\/\//))
-                    {
-                        redirectUrl = 'http://' + redirectUrl;
-                    }
+                    let redirectUrl = fixUrl(item["url"].toLowerCase());
                     res.redirect(redirectUrl);
                     return;
                 }
@@ -61,7 +66,7 @@ function validURL(string) {
   }
 
 app.post('/', async (req, res) => {
-    let inputUrl = req.body["inputUrl"];
+    let inputUrl = fixUrl(req.body["inputUrl"]);
     let inputHash = shortHash(inputUrl);
     let isInTable = false;
     if(validURL(inputUrl)){
