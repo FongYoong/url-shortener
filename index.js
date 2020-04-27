@@ -26,11 +26,15 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
+const shortHash = require('short-hash');
 
 app.use(express.json())
 
 app.get('/:outUrl', (req, res) => {
-    res.send(req.params["outUrl"]+'Nothing to see here   :D');
+    res.send(shortHash(req.params["outUrl"]));
+});
+app.get('/', (req, res) => {
+    res.send('Nothing to see here   :D');
 });
 
 function validURL(str) {
